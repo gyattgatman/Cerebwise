@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Search Results | Cerebwise</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="results.css">
+</head>
+
+<body class="results-page">
+    <main class="results-main">
+        <a class="results-home-link" href="HomePage.html" id="home-link">Back to search</a>
+        <img class="results-logo" src="CEREBWISELOGO.png" alt="Cerebwise">
+
+        <div id="empty-state" class="results-empty" role="alert" hidden>
+            <h1>No question to display</h1>
+            <p>Return to the search page and enter a question to get started.</p>
+        </div>
+
+        <section id="results-content" aria-labelledby="question-heading" hidden>
+            <h1 id="question-heading">Your question</h1>
+            <p id="original-question" class="original-question"></p>
+            <p id="selected-mode-note" class="selected-mode-note" aria-live="polite"></p>
+
+            <div class="results-grid" aria-label="Search result modes">
+                <article class="result-section" data-result-mode="Wisdom Library">
+                    <h2>Wisdom Library</h2>
+                    <p class="placeholder-label">Placeholder</p>
+                    <p>A curated collection of relevant references will appear here when content sources are connected.</p>
+                </article>
+                <article class="result-section" data-result-mode="Simplicity">
+                    <h2>Simplicity</h2>
+                    <p class="placeholder-label">Placeholder</p>
+                    <p>A concise explanation will appear here when answer content is available.</p>
+                </article>
+                <article class="result-section" data-result-mode="Different Perspectives">
+                    <h2>Different Perspectives</h2>
+                    <p class="placeholder-label">Placeholder</p>
+                    <p>Multiple viewpoints will appear here when answer content is available.</p>
+                </article>
+            </div>
+            <p class="placeholder-disclaimer">These sections contain placeholder text only. No AI-generated answers or source material are shown.</p>
+        </section>
+    </main>
+
+    <div class="mode-picker" id="mode-picker">
+        <button
+            class="mode-trigger"
+            id="mode-trigger"
+            type="button"
+            aria-label="Choose a mode. Current mode: Wisdom Library"
+            aria-expanded="false"
+            aria-controls="mode-choices"
+        >
+            <img class="mode-button-image" src="ModeButton.png" alt="">
+            <img
+                class="current-mode-image"
+                id="current-mode-image"
+                src="WisdomLibraryMode.png"
+                alt=""
+            >
+        </button>
+
+        <div class="mode-connector" aria-hidden="true">
+            <span class="mode-connector-vertical"></span>
+            <span class="mode-connector-horizontal"></span>
+        </div>
+
+        <div class="mode-choices" id="mode-choices" aria-label="Choose a mode" inert>
+            <button
+                class="mode-choice is-selected"
+                type="button"
+                data-mode="Wisdom Library"
+                data-image="WisdomLibraryMode.png"
+                aria-pressed="true"
+            >
+                <img src="WisdomLibraryMode.png" alt="">
+                <span>Wisdom Library</span>
+            </button>
+            <button
+                class="mode-choice"
+                type="button"
+                data-mode="Simplicity"
+                data-image="SimplicityMode.png"
+                aria-pressed="false"
+            >
+                <img src="SimplicityMode.png" alt="">
+                <span>Simplicity</span>
+            </button>
+            <button
+                class="mode-choice"
+                type="button"
+                data-mode="Different Perspectives"
+                data-image="DifferentPerspectivesMode.png"
+                aria-pressed="false"
+            >
+                <img src="DifferentPerspectivesMode.png" alt="">
+                <span>Different Perspectives</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="Index.js"></script>
+</body>
+</html>
