@@ -71,6 +71,43 @@ button {
     cursor: pointer;
 }
 
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid #fff9ed;
+    outline-offset: 3px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.search-message {
+    width: min(600px, 90%);
+    min-height: 1.4em;
+    margin: 10px 0 0;
+    color: #fff9ed;
+    font-size: 14px;
+    text-shadow: 0 1px 5px #29465c;
+}
+
+.search-error {
+    color: #fff9ed;
+    font-weight: 700;
+}
+
+.search-container button:disabled {
+    cursor: wait;
+    opacity: 0.8;
+}
+
 .mode-picker {
     position: fixed;
     z-index: 2;
