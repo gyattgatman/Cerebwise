@@ -42,7 +42,7 @@ function selectMode(mode) {
         const params = new URLSearchParams(window.location.search);
         params.set("mode", mode);
         window.history.replaceState(null, "", `${window.location.pathname}?${params}`);
-        homeLink.href = `HomePage.html?mode=${encodeURIComponent(mode)}`;
+        homeLink.href = `index.html?mode=${encodeURIComponent(mode)}`;
     }
 }
 
