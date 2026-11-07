@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cerebwise</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,13 +16,19 @@
             Understand with one search.
         </p>
 
-        <div class="search-container">
-            <input
-                type="text"
+        <form class="search-container" id="search-form">
+            <label class="visually-hidden" for="SearchInp">Search question</label>
+            <input id="SearchInp" class="inp" type="text"
                 placeholder="Take your time.."
-            >
-            <button type="button">Search</button>
-        </div>
+                aria-required="true"
+                aria-describedby="search-error search-status"
+                aria-invalid="false">
+
+            <button id="Search" type="submit" aria-describedby="search-status">Search</button>
+
+        </form>
+        <p class="search-message search-error" id="search-error" role="alert" hidden></p>
+        <p class="search-message" id="search-status" role="status" aria-live="polite" hidden></p>
     </main>
 
     <div class="mode-picker" id="mode-picker">
@@ -80,51 +88,7 @@
         </div>
     </div>
 
-    <script>
-        const modePicker = document.querySelector("#mode-picker");
-        const modeTrigger = document.querySelector("#mode-trigger");
-        const currentModeImage = document.querySelector("#current-mode-image");
-        const modeChoices = document.querySelector("#mode-choices");
-        const choices = document.querySelectorAll(".mode-choice");
-
-        function setModePickerOpen(isOpen) {
-            modePicker.classList.toggle("is-open", isOpen);
-            modeTrigger.setAttribute("aria-expanded", String(isOpen));
-            modeChoices.inert = !isOpen;
-        }
-
-        modeTrigger.addEventListener("click", () => {
-            setModePickerOpen(modeTrigger.getAttribute("aria-expanded") !== "true");
-        });
-
-        choices.forEach((choice) => {
-            choice.addEventListener("click", () => {
-                const mode = choice.dataset.mode;
-                const image = choice.dataset.image;
-
-                currentModeImage.src = image;
-                modeTrigger.setAttribute("aria-label", `Choose a mode. Current mode: ${mode}`);
-                choices.forEach((item) => {
-                    const isSelected = item === choice;
-                    item.classList.toggle("is-selected", isSelected);
-                    item.setAttribute("aria-pressed", String(isSelected));
-                });
-                setModePickerOpen(false);
-            });
-        });
-
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") {
-                setModePickerOpen(false);
-                modeTrigger.focus();
-            }
-        });
-
-        document.addEventListener("click", (event) => {
-            if (!modePicker.contains(event.target)) {
-                setModePickerOpen(false);
-            }
-        });
-    </script>
+    <script src="Index.js"></script>
 </body>
+
 </html>
