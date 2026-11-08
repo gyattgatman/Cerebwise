@@ -14,8 +14,14 @@ const questionHeading = document.querySelector("#original-question");
 const selectedModeNote = document.querySelector("#selected-mode-note");
 const homeLink = document.querySelector("#home-link");
 const resultSections = document.querySelectorAll(".result-section");
+const answerContents = document.querySelectorAll(".answer-content");
+const answerStatus = document.querySelector("#answer-status");
+const answerError = document.querySelector("#answer-error");
+const wisdomDisclaimer = document.querySelector("#wisdom-disclaimer");
 const pageParams = new URLSearchParams(window.location.search);
 let selectedMode = "Wisdom Library";
+let activeAnswerRequest = 0;
+const generatedAnswers = new Map();
 
 function selectMode(mode) {
     const selectedChoice = Array.from(choices).find((choice) => choice.dataset.mode === mode);
@@ -35,9 +41,12 @@ function selectMode(mode) {
 
     if (resultsContent) {
         resultSections.forEach((section) => {
-            section.classList.toggle("is-selected", section.dataset.resultMode === mode);
+            const isSelected = section.dataset.resultMode === mode;
+            section.classList.toggle("is-selected", isSelected);
+            section.hidden = !isSelected;
         });
         selectedModeNote.textContent = `Selected mode: ${mode}`;
+        wisdomDisclaimer.hidden = mode !== "Wisdom Library";
 
         const params = new URLSearchParams(window.location.search);
         params.set("mode", mode);
@@ -52,6 +61,84 @@ function setModePickerOpen(isOpen) {
     modeChoices.inert = !isOpen;
 }
 
+async function requestAnswer(question, mode) {
+    const requestId = ++activeAnswerRequest;
+    const answerContent = Array.from(answerContents).find(
+        (content) => content.dataset.answerMode === mode
+    );
+    if (!answerContent) {
+        answerError.textContent = "Could not find the selected result section.";
+        answerError.hidden = false;
+        answerStatus.hidden = true;
+        return;
+    }
+
+    const cachedAnswer = generatedAnswers.get(mode);
+    if (cachedAnswer) {
+        answerContent.textContent = cachedAnswer.answer;
+        answerStatus.textContent = `Response generated with ${cachedAnswer.model}.`;
+        answerStatus.hidden = false;
+        answerError.hidden = true;
+        return;
+    }
+
+    answerContent.textContent = "";
+    answerError.hidden = true;
+    answerStatus.textContent = "Generating your response with Ollama...";
+    answerStatus.hidden = false;
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/question", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ question, mode })
+        });
+        let payload;
+        try {
+            payload = await response.json();
+        } catch {
+            throw new Error("The Python API returned an unreadable response.");
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                typeof payload.detail === "string"
+                    ? payload.detail
+                    : `The Python API returned an error (${response.status}).`
+            );
+        }
+        if (typeof payload.answer !== "string" || !payload.answer.trim()) {
+            throw new Error("The Python API returned an empty answer. Please try again.");
+        }
+
+        if (requestId !== activeAnswerRequest) {
+            return;
+        }
+
+        const model = typeof payload.model === "string" ? payload.model : "Ollama";
+        const answer = { answer: payload.answer, model };
+        generatedAnswers.set(mode, answer);
+        answerContent.textContent = answer.answer;
+        answerStatus.textContent = `Response generated with ${model}.`;
+        answerStatus.hidden = false;
+    } catch (error) {
+        if (requestId !== activeAnswerRequest) {
+            return;
+        }
+
+        answerStatus.hidden = true;
+        answerError.textContent = error instanceof TypeError
+            ? "Could not reach the Python API. Start it with `python main.py` from the BackEnd folder."
+            : error instanceof Error
+                ? error.message
+                : "An unexpected error occurred while generating your response.";
+        answerError.hidden = false;
+    }
+}
+
+selectMode(selectedMode);
 if (pageParams.has("mode")) {
     selectMode(pageParams.get("mode"));
 }
@@ -62,8 +149,12 @@ modeTrigger.addEventListener("click", () => {
 
 choices.forEach((choice) => {
     choice.addEventListener("click", () => {
+        const modeChanged = selectedMode !== choice.dataset.mode;
         selectMode(choice.dataset.mode);
         setModePickerOpen(false);
+        if (resultsContent && modeChanged && resultQuestion) {
+            requestAnswer(resultQuestion, selectedMode);
+        }
     });
 });
 
@@ -75,11 +166,11 @@ document.addEventListener("keydown", (event) => {
 });
 
 if (searchForm) {
-    searchForm.addEventListener("submit", (event) => {
+    searchForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const question = searchInput.value;
-        if (!question.trim()) {
+        const question = searchInput.value.trim();
+        if (!question) {
             searchError.textContent = "Please enter a question before searching.";
             searchError.hidden = false;
             searchInput.setAttribute("aria-invalid", "true");
@@ -90,20 +181,16 @@ if (searchForm) {
         searchError.hidden = true;
         searchError.textContent = "";
         searchInput.setAttribute("aria-invalid", "false");
-        searchInput.disabled = true;
-        searchButton.disabled = true;
-        searchButton.setAttribute("aria-busy", "true");
-        searchButton.textContent = "Searching...";
-        searchStatus.textContent = "Opening your results...";
-        searchStatus.hidden = false;
-
         const params = new URLSearchParams({
             question,
             mode: selectedMode
         });
-        window.setTimeout(() => {
-            window.location.href = `Results.html?${params}`;
-        }, 150);
+        searchButton.disabled = true;
+        searchButton.setAttribute("aria-busy", "true");
+        searchButton.textContent = "Opening...";
+        searchStatus.textContent = "Opening your results...";
+        searchStatus.hidden = false;
+        window.location.href = `Results.html?${params}`;
     });
 
     searchInput.addEventListener("input", () => {
@@ -114,11 +201,12 @@ if (searchForm) {
     });
 }
 
+const resultQuestion = resultsContent ? (pageParams.get("question") || "").trim() : "";
 if (resultsContent && emptyState) {
-    const question = pageParams.get("question");
-    if (question && question.trim()) {
-        questionHeading.textContent = question;
+    if (resultQuestion) {
+        questionHeading.textContent = resultQuestion;
         resultsContent.hidden = false;
+        requestAnswer(resultQuestion, selectedMode);
     } else {
         emptyState.hidden = false;
     }
