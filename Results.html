@@ -10,7 +10,7 @@
 
 <body class="results-page">
     <main class="results-main">
-        <a class="results-home-link" href="HomePage.html" id="home-link">Back to search</a>
+        <a class="results-home-link" href="index.html" id="home-link">Back to search</a>
         <img class="results-logo" src="CEREBWISELOGO.png" alt="Cerebwise">
 
         <div id="empty-state" class="results-empty" role="alert" hidden>
@@ -22,25 +22,26 @@
             <h1 id="question-heading">Your question</h1>
             <p id="original-question" class="original-question"></p>
             <p id="selected-mode-note" class="selected-mode-note" aria-live="polite"></p>
+            <p id="answer-status" class="answer-status" role="status" aria-live="polite" hidden></p>
+            <p id="answer-error" class="answer-error" role="alert" hidden></p>
 
             <div class="results-grid" aria-label="Search result modes">
                 <article class="result-section" data-result-mode="Wisdom Library">
                     <h2>Wisdom Library</h2>
-                    <p class="placeholder-label">Placeholder</p>
-                    <p>A curated collection of relevant references will appear here when content sources are connected.</p>
+                    <p class="answer-content" data-answer-mode="Wisdom Library"></p>
                 </article>
                 <article class="result-section" data-result-mode="Simplicity">
                     <h2>Simplicity</h2>
-                    <p class="placeholder-label">Placeholder</p>
-                    <p>A concise explanation will appear here when answer content is available.</p>
+                    <p class="answer-content" data-answer-mode="Simplicity"></p>
                 </article>
                 <article class="result-section" data-result-mode="Different Perspectives">
                     <h2>Different Perspectives</h2>
-                    <p class="placeholder-label">Placeholder</p>
-                    <p>Multiple viewpoints will appear here when answer content is available.</p>
+                    <p class="answer-content" data-answer-mode="Different Perspectives"></p>
                 </article>
             </div>
-            <p class="placeholder-disclaimer">These sections contain placeholder text only. No AI-generated answers or source material are shown.</p>
+            <p id="wisdom-disclaimer" class="wisdom-disclaimer" hidden>
+                External source retrieval is not implemented yet; use suggested concepts as starting points for further research.
+            </p>
         </section>
     </main>
 
