@@ -1,156 +1,107 @@
-.results-page {
-    background-attachment: fixed;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Search Results | Cerebwise</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="results.css">
+</head>
 
-.results-main {
-    width: min(1000px, calc(100% - 40px));
-    margin: 0 auto;
-    padding: 28px 0 140px;
-    color: #fff9ed;
-}
+<body class="results-page">
+    <main class="results-main">
+        <a class="results-home-link" href="index.html" id="home-link">Back to search</a>
+        <img class="results-logo" src="CEREBWISELOGO.png" alt="Cerebwise">
 
-.results-home-link {
-    display: inline-block;
-    margin-bottom: 20px;
-    color: #fff9ed;
-    text-underline-offset: 4px;
-}
+        <div id="empty-state" class="results-empty" role="alert" hidden>
+            <h1>No question to display</h1>
+            <p>Return to the search page and enter a question to get started.</p>
+        </div>
 
-.results-logo {
-    display: block;
-    width: min(220px, 60vw);
-    height: auto;
-    margin: 0 auto 28px;
-}
+        <section id="results-content" aria-labelledby="question-heading" hidden>
+            <h1 id="question-heading">Your question</h1>
+            <p id="original-question" class="original-question"></p>
+            <p id="selected-mode-note" class="selected-mode-note" aria-live="polite"></p>
+            <p id="answer-status" class="answer-status" role="status" aria-live="polite" hidden></p>
+            <p id="answer-error" class="answer-error" role="alert" hidden></p>
 
-.results-main h1 {
-    margin: 0 0 12px;
-    font-size: clamp(24px, 4vw, 36px);
-    overflow-wrap: anywhere;
-    text-shadow: 0 1px 5px #29465c;
-}
+            <div class="results-grid" aria-label="Search result modes">
+                <article class="result-section" data-result-mode="Wisdom Library">
+                    <h2>Wisdom Library</h2>
+                    <p class="answer-content" data-answer-mode="Wisdom Library"></p>
+                </article>
+                <article class="result-section" data-result-mode="Simplicity">
+                    <h2>Simplicity</h2>
+                    <p class="answer-content" data-answer-mode="Simplicity"></p>
+                </article>
+                <article class="result-section" data-result-mode="Different Perspectives">
+                    <h2>Different Perspectives</h2>
+                    <p class="answer-content" data-answer-mode="Different Perspectives"></p>
+                </article>
+            </div>
+            <p id="wisdom-disclaimer" class="wisdom-disclaimer" hidden>
+                External source retrieval is not implemented yet; use suggested concepts as starting points for further research.
+            </p>
+        </section>
+    </main>
 
-.original-question {
-    margin: 0 0 14px;
-    overflow-wrap: anywhere;
-    color: #fff9ed;
-    font-size: clamp(18px, 2.5vw, 24px);
-    text-shadow: 0 1px 5px #29465c;
-}
+    <div class="mode-picker" id="mode-picker">
+        <button
+            class="mode-trigger"
+            id="mode-trigger"
+            type="button"
+            aria-label="Choose a mode. Current mode: Wisdom Library"
+            aria-expanded="false"
+            aria-controls="mode-choices"
+        >
+            <img class="mode-button-image" src="ModeButton.png" alt="">
+            <img
+                class="current-mode-image"
+                id="current-mode-image"
+                src="WisdomLibraryMode.png"
+                alt=""
+            >
+        </button>
 
-.selected-mode-note {
-    margin: 0 0 24px;
-    color: #fff9ed;
-    text-shadow: 0 1px 5px #29465c;
-}
+        <div class="mode-connector" aria-hidden="true">
+            <span class="mode-connector-vertical"></span>
+            <span class="mode-connector-horizontal"></span>
+        </div>
 
-.answer-status,
-.answer-error,
-.wisdom-disclaimer {
-    margin: 0 0 18px;
-    color: #fff9ed;
-    font-size: 15px;
-    line-height: 1.5;
-    text-shadow: 0 1px 5px #29465c;
-}
+        <div class="mode-choices" id="mode-choices" aria-label="Choose a mode" inert>
+            <button
+                class="mode-choice is-selected"
+                type="button"
+                data-mode="Wisdom Library"
+                data-image="WisdomLibraryMode.png"
+                aria-pressed="true"
+            >
+                <img src="WisdomLibraryMode.png" alt="">
+                <span>Wisdom Library</span>
+            </button>
+            <button
+                class="mode-choice"
+                type="button"
+                data-mode="Simplicity"
+                data-image="SimplicityMode.png"
+                aria-pressed="false"
+            >
+                <img src="SimplicityMode.png" alt="">
+                <span>Simplicity</span>
+            </button>
+            <button
+                class="mode-choice"
+                type="button"
+                data-mode="Different Perspectives"
+                data-image="DifferentPerspectivesMode.png"
+                aria-pressed="false"
+            >
+                <img src="DifferentPerspectivesMode.png" alt="">
+                <span>Different Perspectives</span>
+            </button>
+        </div>
+    </div>
 
-.answer-error {
-    font-weight: 700;
-}
-
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-}
-
-.result-section {
-    min-width: 0;
-    padding: 20px;
-    border: 1px solid rgb(255 249 237 / 75%);
-    border-radius: 16px;
-    background: rgb(255 249 237 / 94%);
-    color: #31081f;
-    box-shadow: 0 2px 8px rgb(41 70 92 / 30%);
-}
-
-.result-section[hidden] {
-    display: none;
-}
-
-.result-section.is-selected {
-    outline: 3px solid #9c5549;
-    outline-offset: 2px;
-}
-
-.result-section h2 {
-    margin: 0;
-    font-size: clamp(17px, 2vw, 21px);
-    overflow-wrap: anywhere;
-}
-
-.result-section p {
-    margin: 14px 0 0;
-    color: inherit;
-    font-size: 15px;
-    line-height: 1.5;
-    text-align: left;
-    text-shadow: none;
-}
-
-.answer-content {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.results-empty {
-    padding: 24px;
-    border-radius: 16px;
-    background: rgb(255 249 237 / 94%);
-    color: #31081f;
-}
-
-.results-empty h1 {
-    color: #31081f;
-    text-shadow: none;
-}
-
-.results-empty p {
-    margin: 0;
-    color: inherit;
-    text-shadow: none;
-}
-
-.results-page a:focus-visible {
-    outline: 2px solid #fff9ed;
-    outline-offset: 3px;
-}
-
-@media (max-width: 760px) {
-    .results-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .result-section:last-child {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (max-width: 520px) {
-    .results-main {
-        width: min(100% - 28px, 420px);
-        padding-top: 18px;
-    }
-
-    .results-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .result-section:last-child {
-        grid-column: auto;
-    }
-
-    .result-section {
-        padding: 17px;
-    }
-}
+    <script src="Index.js"></script>
+</body>
+</html>
