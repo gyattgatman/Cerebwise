@@ -21,6 +21,7 @@ const wisdomDisclaimer = document.querySelector("#wisdom-disclaimer");
 const pageParams = new URLSearchParams(window.location.search);
 let selectedMode = "Wisdom Library";
 let activeAnswerRequest = 0;
+let demoPassword = null;
 const generatedAnswers = new Map();
 
 function selectMode(mode) {
@@ -87,14 +88,37 @@ async function requestAnswer(question, mode) {
     answerStatus.textContent = "Generating your response with Ollama...";
     answerStatus.hidden = false;
 
+    if (demoPassword === null) {
+        demoPassword = window.prompt("Enter the demo password to continue.");
+        if (demoPassword === null || demoPassword.length === 0) {
+            demoPassword = null;
+            answerStatus.hidden = true;
+            answerError.textContent = "A demo password is required to generate an answer.";
+            answerError.hidden = false;
+            return;
+        }
+    }
+
     try {
-        const response = await fetch("http://127.0.0.1:8000/question", {
+        const response = await fetch("https://festival-andrews-adaptor-python.trycloudflare.com", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-Demo-Password": demoPassword
             },
             body: JSON.stringify({ question, mode })
         });
+        if (response.status === 401) {
+            if (requestId !== activeAnswerRequest) {
+                return;
+            }
+            demoPassword = null;
+            answerStatus.hidden = true;
+            answerError.textContent = "That demo password is incorrect. Please try again.";
+            answerError.hidden = false;
+            return;
+        }
+
         let payload;
         try {
             payload = await response.json();
