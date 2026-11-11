@@ -100,7 +100,7 @@ async function requestAnswer(question, mode) {
     }
 
     try {
-        const response = await fetch("https://festival-andrews-adaptor-python.trycloudflare.com", {
+        const response = await fetch("https://earth-spring-distributions-vacations.trycloudflare.com/question", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
