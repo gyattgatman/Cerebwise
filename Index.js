@@ -111,7 +111,7 @@ async function requestAnswer(question, mode) {
     }
 
     try {
-        const response = await fetch("https://qld-lancaster-briefs-sweet.trycloudflare.com/question", {
+        const response = await fetch("https://mart-overall-utils-metropolitan.trycloudflare.com/question", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
