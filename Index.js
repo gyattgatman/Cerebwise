@@ -23,15 +23,14 @@ let selectedMode = "Wisdom Library";
 let activeAnswerRequest = 0;
 let demoPassword = null;
 
-// this is for headers, bulletpoints, and markdowns to render 
 function renderAnswer(element, markdown) {
     const html = marked.parse(markdown);
     element.innerHTML = DOMPurify.sanitize(html);
 
-    element.querySelectorAll('ul').forEach((ul) => {
-    ul.style.listStyleType = 'disc';
-    ul.style.paddingLeft = '1.5rem';
-  });
+    element.querySelectorAll("ul").forEach((ul) => {
+        ul.style.listStyleType = "disc";
+        ul.style.paddingLeft = "1.5rem";
+    });
 }
 
 const generatedAnswers = new Map();
@@ -112,7 +111,7 @@ async function requestAnswer(question, mode) {
     }
 
     try {
-        const response = await fetch("https://qld-lancaster-briefs-sweet.trycloudflare.com/question", {
+        const response = await fetch("https://earth-spring-distributions-vacations.trycloudflare.com/question", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
