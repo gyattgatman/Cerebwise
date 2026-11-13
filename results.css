@@ -81,6 +81,7 @@
 .result-section.is-selected {
     outline: 3px solid #9c5549;
     outline-offset: 2px;
+    grid-column: 1/-1;
 }
 
 .result-section h2 {
