@@ -22,6 +22,18 @@ const pageParams = new URLSearchParams(window.location.search);
 let selectedMode = "Wisdom Library";
 let activeAnswerRequest = 0;
 let demoPassword = null;
+
+// this is for headers, bulletpoints, and markdowns to render 
+function renderAnswer(element, markdown) {
+    const html = marked.parse(markdown);
+    element.innerHTML = DOMPurify.sanitize(html);
+
+    element.querySelectorAll('ul').forEach((ul) => {
+    ul.style.listStyleType = 'disc';
+    ul.style.paddingLeft = '1.5rem';
+  });
+}
+
 const generatedAnswers = new Map();
 
 function selectMode(mode) {
@@ -76,7 +88,7 @@ async function requestAnswer(question, mode) {
 
     const cachedAnswer = generatedAnswers.get(mode);
     if (cachedAnswer) {
-        answerContent.textContent = cachedAnswer.answer;
+        renderAnswer(answerContent, cachedAnswer.answer);
         answerStatus.textContent = `Response generated with ${cachedAnswer.model}.`;
         answerStatus.hidden = false;
         answerError.hidden = true;
@@ -100,7 +112,7 @@ async function requestAnswer(question, mode) {
     }
 
     try {
-        const response = await fetch("https://hampton-giving-awareness-competition.trycloudflare.com/question", {
+        const response = await fetch("https://earth-spring-distributions-vacations.trycloudflare.com/question", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -144,7 +156,7 @@ async function requestAnswer(question, mode) {
         const model = typeof payload.model === "string" ? payload.model : "Ollama";
         const answer = { answer: payload.answer, model };
         generatedAnswers.set(mode, answer);
-        answerContent.textContent = answer.answer;
+        renderAnswer(answerContent, answer.answer);
         answerStatus.textContent = `Response generated with ${model}.`;
         answerStatus.hidden = false;
     } catch (error) {
